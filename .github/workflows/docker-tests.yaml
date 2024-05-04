@@ -21,7 +21,7 @@ jobs:
       run: docker run --memory 4g --name $CONTAINER_NAME $IMAGE_NAME
 
     - name: Push the Docker image
-      run: docker push ghcr.io/LF477/$IMAGE_NAME:latest
+      run: docker push ghcr.io/lf477/$IMAGE_NAME:latest
 
       # - name: Run Docker to build the Docker image and run the container
       #   run: docker compose up --build
