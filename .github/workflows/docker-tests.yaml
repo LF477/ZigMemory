@@ -10,16 +10,16 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      - uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
-      - name: Build the Docker image
+    - name: Build the Docker image
       run: docker build -t zig-memory-tests .
 
-      - name: Run the container
-        run: docker run --memory 4g --name zig-memory-tests-container zig-memory-tests
+    - name: Run the container
+      run: docker run --memory 4g --name zig-memory-tests-container zig-memory-tests
 
-      - name: Push the Docker image
-        run: docker push ghcr.io/LF477/zig-memory-tests:latest
+    - name: Push the Docker image
+      run: docker push ghcr.io/LF477/zig-memory-tests:latest
 
       # - name: Run Docker to build the Docker image and run the container
       #   run: docker compose up --build
