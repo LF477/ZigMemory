@@ -57,6 +57,8 @@ test "Create array using stack" {
     try expect((point.y == 1.5));
 }
 
+//////////////////  OTHERS HEAP ALLOCATORS //////////////////
+
 test "fixed buffer allocator" { // Exceeds fixed number => error
     var buffer: [1000]u8 = undefined;
     var fba = std.heap.FixedBufferAllocator.init(&buffer);
@@ -69,7 +71,7 @@ test "fixed buffer allocator" { // Exceeds fixed number => error
     try expect(@TypeOf(memory) == []u8);
 }
 
-test "arena allocator" {
+test "arena allocator" { // like several buffers but different sizes (And can be freed all together)
     var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
     defer arena.deinit();
     const allocator = arena.allocator();
@@ -79,7 +81,7 @@ test "arena allocator" {
     _ = try allocator.alloc(u8, 100);
 }
 
-test "GPA" {
+test "GPA" { // safe allocator that can prevent double-free, use-after-free and can detect leaks
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     const allocator = gpa.allocator();
     defer {
