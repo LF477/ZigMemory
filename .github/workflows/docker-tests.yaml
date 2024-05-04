@@ -20,10 +20,10 @@ jobs:
     - name: Run the container
       run: docker run --memory 4g --name $CONTAINER_NAME $IMAGE_NAME
 
-    - name: Push the Docker image
-      run: docker push ghcr.io/lf477/$IMAGE_NAME:latest
-      env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    # - name: Push the Docker image
+    #   run: docker push ghcr.io/lf477/$IMAGE_NAME:latest
+      # env:
+      #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # - name: Run Docker to build the Docker image and run the container
       #   run: docker compose up --build
