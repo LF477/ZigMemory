@@ -9,21 +9,20 @@ RUN apk add zig --repository=https://dl-cdn.alpinelinux.org/alpine/edge/communit
 ################################################################################
 # Create a stage for building/compiling the application.
 # the Awesome Compose repository: https://github.com/docker/awesome-compose
+# add build step, where you build your container and push it to registry (read more about container registry in Github!)
 FROM base as build
 ADD ./ app/
-# FROM cgr.dev/chainguard/zig:latest-dev as final
-# COPY --chown=nonroot . /app
-# WORKDIR /app
-# RUN zig build run
-
-# FROM cgr.dev/chainguard/static 
-# COPY --from=final /app/zig-out/bin/app /usr/local/bin/app
-# CMD ["/usr/local/bin/app"]
 WORKDIR /app
 RUN zig build
-# RUN echo -e '#!/bin/sh\n\
-# zig build' > /bin/build.sh
-# RUN chmod +x /bin/build.sh
+
+################################################################################
+# add test step, where you pull your container and execute tests on your application
+FROM base as test
+WORKDIR /
+COPY --from=build /app/src/ /app/src
+COPY --from=build /app/build.zig /app/build.zig
+WORKDIR /app
+RUN zig build test
 
 ################################################################################
 # Create a final stage for running your application.
@@ -42,7 +41,7 @@ USER appuser
 
 # Copy the executable from the "build" stage.
 COPY --from=build /app/zig-out/bin/ /
+COPY --from=test /app/src/ /tests/
 
 # What the container should run when it is started.
 ENTRYPOINT [ "/ZigMemory" ] 
-#/ZigMemory.exe
