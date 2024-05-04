@@ -4,3 +4,5 @@ services:
     build:
       context: .
       target: final
+  # volumes:
+  #   - .:/data/rep

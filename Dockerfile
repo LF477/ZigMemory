@@ -4,22 +4,23 @@
 
 ################################################################################
 FROM alpine:latest as base
-# RUN apk add zig --repository=https://dl-cdn.alpinelinux.org/alpine/edge/community
+RUN apk add zig --repository=https://dl-cdn.alpinelinux.org/alpine/edge/community
 
 ################################################################################
 # Create a stage for building/compiling the application.
 # the Awesome Compose repository: https://github.com/docker/awesome-compose
-# FROM base as build
+FROM base as build
+ADD ./ app/
+# FROM cgr.dev/chainguard/zig:latest-dev as final
+# COPY --chown=nonroot . /app
+# WORKDIR /app
+# RUN zig build run
 
-FROM cgr.dev/chainguard/zig:latest-dev as builder
-COPY --chown=nonroot . /app
+# FROM cgr.dev/chainguard/static 
+# COPY --from=final /app/zig-out/bin/app /usr/local/bin/app
+# CMD ["/usr/local/bin/app"]
 WORKDIR /app
-RUN zig build run
-
-FROM cgr.dev/chainguard/static
-COPY --from=builder /app/zig-out/bin/app /usr/local/bin/app
-CMD ["/usr/local/bin/app"]
-
+RUN zig build
 # RUN echo -e '#!/bin/sh\n\
 # zig build' > /bin/build.sh
 # RUN chmod +x /bin/build.sh
@@ -40,7 +41,8 @@ RUN adduser \
 USER appuser
 
 # Copy the executable from the "build" stage.
-# COPY --from=build /bin/build.sh /bin/
+COPY --from=build /app/zig-out/bin/ /
 
 # What the container should run when it is started.
-# ENTRYPOINT [ "/bin/build.sh" ]
+ENTRYPOINT [ "/ZigMemory" ] 
+#/ZigMemory.exe
