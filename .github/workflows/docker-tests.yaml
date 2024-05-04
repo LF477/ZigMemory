@@ -22,6 +22,10 @@ jobs:
 
     - name: Push the Docker image
       run: docker push ghcr.io/lf477/$IMAGE_NAME:latest
+      with:
+        # registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
 
       # - name: Run Docker to build the Docker image and run the container
       #   run: docker compose up --build
