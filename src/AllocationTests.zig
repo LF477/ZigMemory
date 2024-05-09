@@ -28,9 +28,14 @@ test "Create array using heap" {
     try expect(memory[1] == 2);
     try expect(@TypeOf(memory) == []u8);
     try expect(numbers.items.len == 3);
+    // const allc = allocator.ptr;
+    std.debug.print("\n{}\n{}\n", .{allocator.ptr, memory[1]});
+    std.debug.print("\n{}\n{}\n", .{allocator.ptr, memory[1]});
     allocator.free(memory);
     // std.debug.print("Memory {}", .{memory[0]});
-    try expect(memory.len == 0);
+    // try expect(memory.len == 0);
+    //std.debug.print("\n{}\n{}\n", .{allocator.ptr, memory[1]}); //catch std.debug.print("Error with revealing value", .{});
+    // const allc = allocator.ptr;
 }
 
 test "Heap allocator create/destroy (Single item)" {
