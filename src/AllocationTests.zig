@@ -7,8 +7,11 @@ test "Create array using heap" {
     const allocator = std.heap.page_allocator;
 
     const memory = try allocator.alloc(u8, 100);
-    defer allocator.free(memory);
-
+    //defer expect(memory.len == 0);
+    //defer std.debug.print("Heap memory: {}\nStack memory: {}\n", .{ @sizeOf(@TypeOf(memory)), @sizeOf([]u8) });
+    //defer allocator.free(memory);
+    //defer std.debug.print("Heap memory: {}\nStack memory: {}\n", .{ @sizeOf(@TypeOf(memory)), usize });
+    //defer expect(memory.len == 100);
     memory[1] = 2;
     const memory1 = memory[0..88];
 
@@ -25,6 +28,9 @@ test "Create array using heap" {
     try expect(memory[1] == 2);
     try expect(@TypeOf(memory) == []u8);
     try expect(numbers.items.len == 3);
+    allocator.free(memory);
+    // std.debug.print("Memory {}", .{memory[0]});
+    try expect(memory.len == 0);
 }
 
 test "Heap allocator create/destroy (Single item)" {
