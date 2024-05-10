@@ -1,5 +1,8 @@
 const std = @import("std");
 const expect = std.testing.expect;
+const c = @cImport({
+    @cInclude("malloc.h");
+});
 
 pub fn main() !void {}
 
@@ -7,7 +10,8 @@ test "Create array using heap" {
     const allocator = std.heap.page_allocator;
 
     const memory = try allocator.alloc(u8, 100);
-    defer allocator.free(memory);
+
+    //defer allocator.free(memory);
 
     memory[1] = 2;
     const memory1 = memory[0..88];
@@ -23,14 +27,38 @@ test "Create array using heap" {
     try expect(memory1.len == 88);
     try expect(memory.len == 100);
     try expect(memory[1] == 2);
+    // try expect(memory[0] == 170);
     try expect(@TypeOf(memory) == []u8);
     try expect(numbers.items.len == 3);
+
+    // std.debug.print("\n{any}\n\n", .{memory});
+    allocator.free(memory);
+    // errdefer std.debug.panic("\nThese array already not exists... Rest in Peace!\n", .{});
+    // std.debug.print("\n{any}\n\n", .{memory});
+    // Trying to show array with name memory gives us error
+    // It means it erases it
+
+    // DOCKER GIVES ERROR WHILE IN TERMINAL IT WORKS...
+    // const memory2 = try allocator.create(u8);
+    // allocator.destroy(memory2);
+    // const memory3 = try allocator.create(u8);
+    // defer allocator.destroy(memory3);
+
+    // try std.testing.expect(memory2 == memory3); // memory reuse
+    // DOCKER GIVES ERROR WHILE IN TERMINAL IT WORKS...
 }
 
 test "Heap allocator create/destroy (Single item)" {
     const byte = try std.heap.page_allocator.create(u8);
     defer std.heap.page_allocator.destroy(byte);
     byte.* = 128;
+    // DOCKER GIVES ERROR WHILE IN TERMINAL IT WORKS...
+    // std.heap.page_allocator.destroy(byte);
+    // const byte1 = try std.heap.page_allocator.create(u8);
+    // byte1.* = 128;
+    // defer std.heap.page_allocator.destroy(byte1);
+    // try expect(byte == byte1);
+    // DOCKER GIVES ERROR WHILE IN TERMINAL IT WORKS...
 }
 
 test "Create array using stack" {
@@ -65,6 +93,7 @@ test "fixed buffer allocator" { // Exceeds fixed number => error
     const allocator = fba.allocator();
 
     const memory = try allocator.alloc(u8, 1000);
+    // const memory1 = try allocator.alloc(u8, 1000); Will be error
     defer allocator.free(memory);
 
     try expect(memory.len == 1000);

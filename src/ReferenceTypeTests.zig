@@ -3,11 +3,12 @@ const expect = std.testing.expect;
 
 pub fn main() !void {}
 
-test "Array Passed By Reference"{
+test "Array Passed By Reference" {
     var value = [3]u8{ 1, 2, 3 };
-    
+
     for (0.., value) |i, val| {
-        value[i] = val + 1;
+        std.debug.print("{}", .{val});
+        value[i] += 1;
     }
 
     try expect(value[0] == 2);
@@ -16,15 +17,15 @@ test "Array Passed By Reference"{
 }
 
 const Cstruct = struct {
-    Value:i32,
+    Value: i32,
     fn Increment(self: *Cstruct) !void {
-        self.Value = self.Value + 1;
+        self.Value += 1;
     }
 };
 
-test "Custom Class Passed By Reference"{
-    var customClass = Cstruct{.Value=10};
-    
+test "Custom Class Passed By Reference" {
+    var customClass = Cstruct{ .Value = 10 };
+
     try customClass.Increment();
 
     try expect(customClass.Value == 11);
