@@ -7,7 +7,7 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  # IMAGE_NAME: zig-memory-tests
+  IMAGE_NAME_LOCAL: zig-memory-tests
   CONTAINER_NAME: zig-memory-tests-container
 jobs:
   deploy:
@@ -18,10 +18,11 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Build the Docker image
-      run: docker build -t $IMAGE_NAME .
+      run: docker build -t $IMAGE_NAME_LOCAL .
 
     - name: Run the container
-      run: docker run --name $CONTAINER_NAME $IMAGE_NAME
+      run: docker run --name $CONTAINER_NAME $IMAGE_NAME_LOCAL
+      
   push_to_registry:
     runs-on: ubuntu-latest
     
@@ -29,6 +30,8 @@ jobs:
       contents: read
       packages: write
       attestations: write
+      pages: write
+      id-token: write
     
     steps:
     - name: Checkout repository
