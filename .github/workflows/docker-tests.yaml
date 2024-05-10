@@ -18,7 +18,7 @@ jobs:
       run: docker build -t $IMAGE_NAME .
 
     - name: Run the container
-      run: docker run --memory 1g --name $CONTAINER_NAME $IMAGE_NAME
+      run: docker run --name $CONTAINER_NAME $IMAGE_NAME
 
     # - name: Push the Docker image
     #   run: docker push ghcr.io/lf477/$IMAGE_NAME:latest
