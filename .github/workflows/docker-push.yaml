@@ -1,7 +1,6 @@
 name: push to registry
 on:
   push:
-  pull_request:
 
   workflow_dispatch:
 env:
