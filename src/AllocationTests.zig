@@ -1,5 +1,8 @@
 const std = @import("std");
 const expect = std.testing.expect;
+const c = @cImport({
+    @cInclude("malloc.h");
+});
 
 pub fn main() !void {}
 
@@ -7,11 +10,9 @@ test "Create array using heap" {
     const allocator = std.heap.page_allocator;
 
     const memory = try allocator.alloc(u8, 100);
-    //defer expect(memory.len == 0);
-    //defer std.debug.print("Heap memory: {}\nStack memory: {}\n", .{ @sizeOf(@TypeOf(memory)), @sizeOf([]u8) });
+
     //defer allocator.free(memory);
-    //defer std.debug.print("Heap memory: {}\nStack memory: {}\n", .{ @sizeOf(@TypeOf(memory)), usize });
-    //defer expect(memory.len == 100);
+
     memory[1] = 2;
     const memory1 = memory[0..88];
 
@@ -26,22 +27,34 @@ test "Create array using heap" {
     try expect(memory1.len == 88);
     try expect(memory.len == 100);
     try expect(memory[1] == 2);
+    // try expect(memory[0] == 170);
     try expect(@TypeOf(memory) == []u8);
     try expect(numbers.items.len == 3);
-    // const allc = allocator.ptr;
-    std.debug.print("\n{}\n{}\n", .{allocator.ptr, memory[1]});
-    std.debug.print("\n{}\n{}\n", .{allocator.ptr, memory[1]});
+
+    // std.debug.print("\n{any}\n\n", .{memory});
     allocator.free(memory);
-    // std.debug.print("Memory {}", .{memory[0]});
-    // try expect(memory.len == 0);
-    //std.debug.print("\n{}\n{}\n", .{allocator.ptr, memory[1]}); //catch std.debug.print("Error with revealing value", .{});
-    // const allc = allocator.ptr;
+    // errdefer std.debug.panic("\nThese array already not exists... Rest in Peace!\n", .{});
+    // std.debug.print("\n{any}\n\n", .{memory});
+    // Trying to show array with name memory gives us error
+    // It means it erases it
+
+    const memory2 = try allocator.create(u8);
+    allocator.destroy(memory2);
+    const memory3 = try allocator.create(u8);
+    defer allocator.destroy(memory3);
+
+    try std.testing.expect(memory2 == memory3); // memory reuse
 }
 
 test "Heap allocator create/destroy (Single item)" {
     const byte = try std.heap.page_allocator.create(u8);
-    defer std.heap.page_allocator.destroy(byte);
+    // defer std.heap.page_allocator.destroy(byte);
     byte.* = 128;
+    std.heap.page_allocator.destroy(byte);
+    const byte1 = try std.heap.page_allocator.create(u8);
+    byte1.* = 128;
+    defer std.heap.page_allocator.destroy(byte1);
+    try expect(byte == byte1);
 }
 
 test "Create array using stack" {
@@ -76,6 +89,7 @@ test "fixed buffer allocator" { // Exceeds fixed number => error
     const allocator = fba.allocator();
 
     const memory = try allocator.alloc(u8, 1000);
+    // const memory1 = try allocator.alloc(u8, 1000); Will be error
     defer allocator.free(memory);
 
     try expect(memory.len == 1000);
