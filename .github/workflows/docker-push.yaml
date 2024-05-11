@@ -4,8 +4,8 @@ on:
 
   workflow_dispatch:
 env:
-  # REGISTRY: ghcr.io
-  IMAGE_NAME: ${github.repository}
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 jobs:
   push_to_registry:
     runs-on: ubuntu-latest
