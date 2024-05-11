@@ -1,53 +1,53 @@
-name: pull from registry
-on:
-  push:
+# name: pull from registry
+# on:
+#   push:
 
-  workflow_dispatch:
-env:
-  IMAGE_NAME: ${{ github.repository }}
-  CONTAINER_NAME: zig-memory-tests-container
-jobs:
-  pull_from_registry:
-    runs-on: ubuntu-latest
+#   workflow_dispatch:
+# env:
+#   IMAGE_NAME: ${{ github.repository }}
+#   CONTAINER_NAME: zig-memory-tests-container
+# jobs:
+#   pull_from_registry:
+#     runs-on: ubuntu-latest
     
-    # container:
-    #   image: ghcr.io/lf477/zigmemory
-    #   credentials:
-    #     username: ${{ github.actor }}
-    #     password: ${{ secrets.github_token }}
+#     # container:
+#     #   image: ghcr.io/lf477/zigmemory
+#     #   credentials:
+#     #     username: ${{ github.actor }}
+#     #     password: ${{ secrets.github_token }}
 
-    # container:
-    #   image: $IMAGE_NAME:latest
-    #   credentials:
-    #     username: ${{ secrets.DOCKERHUB_USERNAME }}
-    #     password: ${{ secrets.DOCKERHUB_PASSWORD }}
-    steps:
-    # - id: toLowerCase
-    #   run: INPUT=$IMAGE_NAME echo "::set-output name=lowerCaseValue::${INPUT,,}"
+#     # container:
+#     #   image: $IMAGE_NAME:latest
+#     #   credentials:
+#     #     username: ${{ secrets.DOCKERHUB_USERNAME }}
+#     #     password: ${{ secrets.DOCKERHUB_PASSWORD }}
+#     steps:
+#     # - id: toLowerCase
+#     #   run: INPUT=$IMAGE_NAME echo "::set-output name=lowerCaseValue::${INPUT,,}"
     
-    - name: Checkout repository
-      uses: actions/checkout@v4
+#     - name: Checkout repository
+#       uses: actions/checkout@v4
 
-    - name: Log in to the Container registry
-      uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
-      with:
-        registry: ${{ env.REGISTRY }}
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+#     - name: Log in to the Container registry
+#       uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+#       with:
+#         registry: ${{ env.REGISTRY }}
+#         username: ${{ github.actor }}
+#         password: ${{ secrets.GITHUB_TOKEN }}
     
-    - name: Extract metadata (tags, labels) for Docker
-      id: meta
-      uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
-      with:
-        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+#     - name: Extract metadata (tags, labels) for Docker
+#       id: meta
+#       uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+#       with:
+#         images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-    # - name: Build the Docker image
-    #   run: docker build -t $IMAGE_NAME_LOCAL .
+#     # - name: Build the Docker image
+#     #   run: docker build -t $IMAGE_NAME_LOCAL .
 
-    - name: Pull from registry
-      run: docker pull ${{ steps.meta.outputs.tags }}
+#     - name: Pull from registry
+#       run: docker pull ${{ steps.meta.outputs.tags }}
 
-    - name: Run the container
-      run: docker run --name $CONTAINER_NAME ${{ steps.meta.outputs.tags }}
-      # ${{steps.toLowerCase.outputs.lowerCaseValue}}
-      # $IMAGE_NAME
+#     - name: Run the container
+#       run: docker run --name $CONTAINER_NAME ${{ steps.meta.outputs.tags }}
+#       # ${{steps.toLowerCase.outputs.lowerCaseValue}}
+#       # $IMAGE_NAME
