@@ -51,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: ${{ steps.meta.outputs.tags }}
+      image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
       credentials:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
