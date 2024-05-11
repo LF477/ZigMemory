@@ -5,18 +5,30 @@ on:
 
   workflow_dispatch:
 env:
-  IMAGE_NAME_LOCAL: zig-memory-tests
+  # IMAGE_NAME_LOCAL: zig-memory-tests
+  IMAGE_NAME: ${{ github.repository }}
   CONTAINER_NAME: zig-memory-tests-container
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: read
+      packages: read
+      pages: read
+    
+    container:
+      image: $IMAGE_NAME:latest
+      credentials:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Build the Docker image
-      run: docker build -t $IMAGE_NAME_LOCAL .
+    # - name: Build the Docker image
+    #   run: docker build -t $IMAGE_NAME_LOCAL .
 
     - name: Run the container
-      run: docker run --name $CONTAINER_NAME $IMAGE_NAME_LOCAL
+      run: docker run --name $CONTAINER_NAME $IMAGE_NAME:latest
