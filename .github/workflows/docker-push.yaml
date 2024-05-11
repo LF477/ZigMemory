@@ -53,8 +53,10 @@ jobs:
     container:
       image: $REGISTRY/$IMAGE_NAME
       credentials:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_PASSWORD }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        # ${{ secrets.DOCKERHUB_USERNAME }}
+        # ${{ secrets.DOCKERHUB_PASSWORD }}
 
     steps:
 
