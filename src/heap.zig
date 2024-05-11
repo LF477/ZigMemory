@@ -40,8 +40,8 @@ const heap = @cImport({
 });
 
 pub fn main() !void {
-    const size = GetTotalHeapSize();
-    std.debug.print("\nHeap memory: {any}", .{size});
+    // const size = GetTotalHeapSize();
+    // std.debug.print("\nHeap memory: {any}", .{size});
 }
 
 pub fn GetTotalHeapSize() u32 {

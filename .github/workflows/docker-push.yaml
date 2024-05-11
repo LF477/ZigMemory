@@ -67,6 +67,8 @@ jobs:
         ls -al
         cd ..
         ls -al
+        cd ..
+        ls -al
 
     - name: Run the test
       run: zig build test
