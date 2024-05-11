@@ -1,21 +1,14 @@
 name: docker tests
 on:
   push:
-  # pull_request:
 
   workflow_dispatch:
 env:
-  # IMAGE_NAME_LOCAL: zig-memory-tests
   IMAGE_NAME: ${{ github.repository }}
   CONTAINER_NAME: zig-memory-tests-container
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-      packages: read
-      pages: read
     
     container:
       image: $IMAGE_NAME:latest
