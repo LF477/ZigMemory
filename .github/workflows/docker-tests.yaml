@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     
     container:
-      image: ghcr.io/$IMAGE_NAME
+      image: ghcr.io/lf477/zigmemory
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.github_token }}
