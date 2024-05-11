@@ -34,9 +34,9 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 const std = @import("std");
 const heap = @cImport({
-    @cInclude("heapapi.h");
+    // @cInclude("heapapi.h");
     // @cInclude("errhandlingapi.h");
-    // @cInclude("Windows.h");
+    @cInclude("Windows.h");
 });
 
 pub fn main() !void {
