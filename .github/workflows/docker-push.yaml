@@ -21,19 +21,6 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    # - name: Log in to Docker Hub
-    #   run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-
-    # - name: Build Docker image
-    #   run: docker build --target test -t $IMAGE_NAME .
-
-    # - name: Push image to Docker Hub
-    #   run: docker push $IMAGE_NAME
-
-    # - name: Run tests in Docker container
-    #   run: docker run ${{ env.IMAGE_NAME }}
-
-
     - name: Log in to the Container registry
       uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
       with:
@@ -60,93 +47,19 @@ jobs:
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
 
-    # - name: Generate artifact attestation
-    #   uses: actions/attest-build-provenance@v1.1.1
-    #   with:
-    #     subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}
-    #     subject-digest: ${{ steps.push.outputs.digest }}
-    #     push-to-registry: true
-  
-    # - name: Log in to Docker Hub
-    #     uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
-    #     with:
-    #       username: ${{ secrets.DOCKER_USERNAME }}
-    #       password: ${{ secrets.DOCKER_PASSWORD }}
-
-    #   - name: Extract metadata (tags, labels) for Docker
-    #     id: meta
-    #     uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
-    #     with:
-    #       images: my-docker-hub-namespace/my-docker-hub-repository
-
-    #   - name: Build and push Docker image
-    #     id: push
-    #     uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
-    #     with:
-    #       context: .
-    #       file: ./Dockerfile
-    #       push: true
-    #       tags: ${{ steps.meta.outputs.tags }}
-    #       labels: ${{ steps.meta.outputs.labels }}
-      
-      
-    #   - name: Generate artifact attestation
-    #     uses: actions/attest-build-provenance@v1
-    #     with:
-    #       subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}
-    #       subject-digest: ${{ steps.push.outputs.digest }}
-    #       push-to-registry: true
-
-    # - name: Push the Docker image
-    #   run: |
-    #       docker push ghcr.io/lf477/$IMAGE_NAME:latest
-    #   env:
-    #       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # - name: Run Docker to build the Docker image and run the container
-      #   run: docker compose up --build
   pull_from_registry:
     runs-on: ubuntu-latest
-    
-    # container:
-    #   image: ghcr.io/lf477/zigmemory
-    #   credentials:
-    #     username: ${{ github.actor }}
-    #     password: ${{ secrets.github_token }}
 
     container:
       image: ${{ steps.meta.outputs.tags }}
       credentials:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
     steps:
-    # - id: toLowerCase
-    #   run: INPUT=$IMAGE_NAME echo "::set-output name=lowerCaseValue::${INPUT,,}"
     
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    # - name: Log in to the Container registry
-    #   uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
-    #   with:
-    #     registry: ${{ env.REGISTRY }}
-    #     username: ${{ github.actor }}
-    #     password: ${{ secrets.GITHUB_TOKEN }}
-    
-    # - name: Extract metadata (tags, labels) for Docker
-    #   id: meta
-    #   uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
-    #   with:
-    #     images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-      
-
-    # - name: Build the Docker image
-    #   run: docker build -t $IMAGE_NAME_LOCAL .
-
-    # - name: Pull from registry
-    #   run: docker pull ${{ steps.meta.outputs.tags }}
-
     - name: Run the test
       run: cd /tests && zig build test
-      # ${{steps.toLowerCase.outputs.lowerCaseValue}}
-      # $IMAGE_NAME
