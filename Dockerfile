@@ -44,7 +44,8 @@ USER appuser
 COPY --from=build /app/zig-out/bin/ /
 COPY --from=test /app/src/ /tests/src/
 COPY --from=test /app/build.zig /tests/build.zig
-RUN chmod 777 /tests/build.zig
+ADD src/ /testss/src
+ADD ./build.zig /tests/build.zig
 
 # What the container should run when it is started.
 ENTRYPOINT [ "/ZigMemory" ] 
