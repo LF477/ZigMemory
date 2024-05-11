@@ -33,64 +33,64 @@
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 const std = @import("std");
-const heap = @cImport({
-    // @cInclude("heapapi.h");
-    // @cInclude("errhandlingapi.h");
-    @cInclude("Windows.h");
-});
+// const heap = @cImport({
+//     // @cInclude("heapapi.h");
+//     // @cInclude("errhandlingapi.h");
+//     @cInclude("Windows.h");
+// });
 
 pub fn main() !void {
     // const size = GetTotalHeapSize();
     // std.debug.print("\nHeap memory: {any}", .{size});
 }
 
-pub fn GetTotalHeapSize() u32 {
-    // const hHeap: heap.HANDLE = undefined;
-    // Dim lpMem As Any Ptr
-    // Dim dwFlags As DWORD
-    const totalHeapSize: u32 = 0;
-    const heapEntry: heap.PROCESS_HEAP_ENTRY = undefined;
-    var success: u32 = 0;
-    success = 1;
+// pub fn GetTotalHeapSize() u32 {
+//     // const hHeap: heap.HANDLE = undefined;
+//     // Dim lpMem As Any Ptr
+//     // Dim dwFlags As DWORD
+//     const totalHeapSize: u32 = 0;
+//     const heapEntry: heap.PROCESS_HEAP_ENTRY = undefined;
+//     var success: u32 = 0;
+//     success = 1;
 
-    // Get the number of heaps in the process
-    const numberOfHeaps = heap.GetProcessHeaps(0, null);
-    std.debug.print("HEAP HANDLE: {any}\nTotal Heap Size: {any}\nHeap Entry: {any}\nSuccess: {any}\nNumber Of Heaps: {any}\n", .{ totalHeapSize, totalHeapSize, heapEntry, success, numberOfHeaps });
-    // // ' Create an array to hold the heap handles
-    // Dim hHeaps() As HANDLE
-    // ReDim hHeaps(numberOfHeaps - 1)
-    // const hHeaps = [numberOfHeaps]heap.HANDLE;
-    const hHeaps: heap.PHANDLE = undefined;
+//     // Get the number of heaps in the process
+//     const numberOfHeaps = heap.GetProcessHeaps(0, null);
+//     std.debug.print("HEAP HANDLE: {any}\nTotal Heap Size: {any}\nHeap Entry: {any}\nSuccess: {any}\nNumber Of Heaps: {any}\n", .{ totalHeapSize, totalHeapSize, heapEntry, success, numberOfHeaps });
+//     // // ' Create an array to hold the heap handles
+//     // Dim hHeaps() As HANDLE
+//     // ReDim hHeaps(numberOfHeaps - 1)
+//     // const hHeaps = [numberOfHeaps]heap.HANDLE;
+//     const hHeaps: heap.PHANDLE = undefined;
 
-    // // ' Get the handles to all heaps in the process
-    // std.debug.print("Prev error: {any}\n", .{heap.GetLastError()});
-    const binded_heaps = heap.GetProcessHeaps(0, hHeaps);
-    std.debug.print("binded_heaps: {any}\n", .{binded_heaps});
-    // ' Enumerate all heaps
-    // for (0..numberOfHeaps) |u| {
-    // ' Get a handle to the heap
-    std.debug.print("{any}", .{hHeaps});
-    // hHeap = hHeaps[u];
-    // std.debug.print("{}: {any}", .{ u, hHeap });
+//     // // ' Get the handles to all heaps in the process
+//     // std.debug.print("Prev error: {any}\n", .{heap.GetLastError()});
+//     const binded_heaps = heap.GetProcessHeaps(0, hHeaps);
+//     std.debug.print("binded_heaps: {any}\n", .{binded_heaps});
+//     // ' Enumerate all heaps
+//     // for (0..numberOfHeaps) |u| {
+//     // ' Get a handle to the heap
+//     std.debug.print("{any}", .{hHeaps});
+//     // hHeap = hHeaps[u];
+//     // std.debug.print("{}: {any}", .{ u, hHeap });
 
-    // // ' Initialize the heap entry structure
-    // heapEntry.lpData = null;
+//     // // ' Initialize the heap entry structure
+//     // heapEntry.lpData = null;
 
-    // // ' Enumerate the memory blocks in the heap
-    // success = heap.HeapWalk(hHeap, &heapEntry);
-    // if (success) {
-    //     // ' Check if it is a valid memory block
-    //     if ((heapEntry.wFlags and heap.PROCESS_HEAP_ENTRY_BUSY) != 0) {
-    //         // ' Get the size of the memory block
-    //         totalHeapSize += heap.HeapSize(hHeap, 0, heapEntry.lpData);
-    //     }
-    // } else {
-    //     std.debug.print("Failed to walk the heap", .{});
-    // }
-    // }
+//     // // ' Enumerate the memory blocks in the heap
+//     // success = heap.HeapWalk(hHeap, &heapEntry);
+//     // if (success) {
+//     //     // ' Check if it is a valid memory block
+//     //     if ((heapEntry.wFlags and heap.PROCESS_HEAP_ENTRY_BUSY) != 0) {
+//     //         // ' Get the size of the memory block
+//     //         totalHeapSize += heap.HeapSize(hHeap, 0, heapEntry.lpData);
+//     //     }
+//     // } else {
+//     //     std.debug.print("Failed to walk the heap", .{});
+//     // }
+//     // }
 
-    return totalHeapSize;
-}
+//     return totalHeapSize;
+// }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // #include "windows.bi"
 

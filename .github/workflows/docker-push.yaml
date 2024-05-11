@@ -62,7 +62,7 @@ jobs:
     - name: Echo smth
       run: echo "Hello Test"
 
-    - name: Ls
+    - name: Run the test
       run: |
         ls -al
         cd ..
@@ -73,6 +73,4 @@ jobs:
         ls -al
         cd tests
         ls -al
-
-    - name: Run the test
-      run: zig build test
+        zig build test
