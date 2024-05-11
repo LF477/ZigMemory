@@ -63,9 +63,10 @@ jobs:
       run: echo "Hello Test"
 
     - name: Ls
-      run: ls -al
+      run: |
+        ls -al
+        cd ..
+        ls -al
 
     - name: Run the test
-      run: |
-        cd /tests 
-        zig build test
+      run: zig build test
