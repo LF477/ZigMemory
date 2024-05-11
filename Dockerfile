@@ -14,6 +14,7 @@ FROM base as build
 ADD ./ app/
 WORKDIR /app
 RUN zig build
+VOLUME [ "/app" ]
 
 ################################################################################
 # add test step, where you pull your container and execute tests on your application
