@@ -71,7 +71,7 @@ jobs:
         ls -al
         cd ..
         ls -al
-        cd ..
+        cd tests
         ls -al
 
     - name: Run the test
