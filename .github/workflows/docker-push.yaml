@@ -65,6 +65,13 @@ jobs:
     - name: Run the test
       run: |
         ls -al
-        cd ZigMemory
+        cd ..
+        ls -al
+        ls -al ./_temp
+        cd ..
+        ls -al
+        cd ..
+        ls -al
+        cd tests
         ls -al
         zig build test
