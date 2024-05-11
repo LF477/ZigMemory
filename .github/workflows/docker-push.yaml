@@ -59,6 +59,8 @@ jobs:
         # ${{ secrets.DOCKERHUB_PASSWORD }}
 
     steps:
+    - name: Echo smth
+      run: echo "Hello Test"
 
     - name: Run the test
       run: |
