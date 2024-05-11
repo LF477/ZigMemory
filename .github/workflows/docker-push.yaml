@@ -67,9 +67,9 @@ jobs:
         ls -al
         cd ..
         ls -al
-        ls -al ./_temp
         cd ..
         ls -al
+        ls -al ./_temp
         cd ..
         ls -al
         cd tests
