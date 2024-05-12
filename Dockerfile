@@ -48,4 +48,4 @@ ADD src/ /testss/src
 ADD ./build.zig /tests/build.zig
 
 # What the container should run when it is started.
-ENTRYPOINT [ "/ZigMemory" ] 
+CMD [ "zig", "build", "test" ] 
