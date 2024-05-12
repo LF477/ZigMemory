@@ -9,34 +9,34 @@ pub fn build(b: *std.Build) void {
 
     // const lib = b.addStaticLibrary(.{
     //     .name = "ZigMemory",
-    //     .root_source_file = b.path("src/root.zig"), // path for lib
+    //     .root_source_file = b.path("src/heap.zig"), // path for lib
     //     .target = target,
     //     .optimize = optimize,
     // });
-
+    // lib.linkLibC();
     // b.installArtifact(lib); // library to be installed into the standard location
 
     ////////////////////////////////////////////////////////////////////////////////
 
-    const exe = b.addExecutable(.{
-        .name = "ZigMemory",
-        .root_source_file = b.path("src/heap.zig"), //AllocationTests
-        .target = target,
-        .optimize = optimize,
-    });
-    exe.linkLibC();
-    b.installArtifact(exe); // executable to be installed into the standard location
+    // const exe = b.addExecutable(.{
+    //     .name = "ZigMemory",
+    //     .root_source_file = b.path("src/heap.zig"), //AllocationTests
+    //     .target = target,
+    //     .optimize = optimize,
+    // });
+    // exe.linkLibC();
+    // b.installArtifact(exe); // executable to be installed into the standard location
 
-    //##############################################################################
+    // //##############################################################################
 
-    const run_cmd = b.addRunArtifact(exe); // Run step in the build graph
+    // const run_cmd = b.addRunArtifact(exe); // Run step in the build graph
 
-    if (b.args) |args| {
-        run_cmd.addArgs(args); // pass arguments to the application in the build `zig build run -- arg1 arg2 etc`
-    }
+    // if (b.args) |args| {
+    //     run_cmd.addArgs(args); // pass arguments to the application in the build `zig build run -- arg1 arg2 etc`
+    // }
 
-    const run_step = b.step("run", "Run the app"); // only run
-    run_step.dependOn(&run_cmd.step);
+    // const run_step = b.step("run", "Run the app"); // only run
+    // run_step.dependOn(&run_cmd.step);
 
     ////////////////////////////////////////////////////////////////////////////////
 
@@ -62,7 +62,7 @@ pub fn build(b: *std.Build) void {
         .target = target,
         .optimize = optimize,
     });
-
+    exe_unit_tests2.linkLibC();
     const run_exe_unit_tests2 = b.addRunArtifact(exe_unit_tests2);
 
     const exe_unit_tests3 = b.addTest(.{
@@ -71,6 +71,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
     });
 
+    // exe_unit_tests3.linkLibC();
     const run_exe_unit_tests3 = b.addRunArtifact(exe_unit_tests3);
 
     const exe_unit_tests4 = b.addTest(.{
@@ -79,6 +80,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
     });
 
+    // exe_unit_tests4.linkLibC();
     const run_exe_unit_tests4 = b.addRunArtifact(exe_unit_tests4);
 
     const test_step = b.step("test", "Run unit tests"); // `test` step to the `zig build --help` menu
