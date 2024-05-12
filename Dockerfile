@@ -46,6 +46,6 @@ COPY --from=test /app/src/ /tests/src/
 COPY --from=test /app/build.zig /tests/build.zig
 ADD src/ /testss/src
 ADD ./build.zig /tests/build.zig
-
+WORKDIR /tests
 # What the container should run when it is started.
 CMD [ "zig", "build", "test" ] 
