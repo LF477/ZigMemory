@@ -3,16 +3,34 @@ const expect = std.testing.expect;
 const heap = @cImport({
     @cInclude("Windows.h");
 });
-pub fn main() !void {}
+pub fn main() !void {
+    const allocator = std.heap.page_allocator;
+    std.debug.print("Before allocation. ", .{});
+
+    std.debug.print("Heap memory: {any}\n", .{GetTotalHeapSize()});
+    const memory = try allocator.alloc(u8, 100);
+    std.debug.print("After allocation. ", .{});
+    std.debug.print("Heap memory: {any}\n", .{GetTotalHeapSize()});
+
+
+    memory[1] = 2;
+
+    std.debug.print("Before free. ", .{});
+    std.debug.print("Heap memory: {any}\n", .{GetTotalHeapSize()});
+    allocator.free(memory);
+    std.debug.print("After free. ", .{});
+    std.debug.print("Heap memory: {any}\n", .{GetTotalHeapSize()});
+}
 
 pub fn GetTotalHeapSize() c_ulonglong {
     var hHeap: heap.HANDLE = undefined;
     var totalHeapSize: c_ulonglong = 0;
     var heapEntry: heap.PROCESS_HEAP_ENTRY = undefined;
     var success: c_int = undefined;
+    var numberOfHeaps: c_ulong = undefined;
 
     // ' Get the number of heaps in the process
-    const numberOfHeaps = heap.GetProcessHeaps(0, null);
+    numberOfHeaps = heap.GetProcessHeaps(0, null);
 
     // ' Create an array to hold the heap handles
     var hHeaps: [200]heap.HANDLE = undefined;
@@ -21,7 +39,7 @@ pub fn GetTotalHeapSize() c_ulonglong {
     // ' Get the handles to all heaps in the process
     _ = heap.GetProcessHeaps(numberOfHeaps, &hHeaps[0]);
     // ' Enumerate all heaps
-    for (0..numberOfHeaps) |i|{
+    for (0..numberOfHeaps) |i| {
         // ' Get a handle to the heap
         hHeap = hHeaps[i];
 
@@ -29,36 +47,38 @@ pub fn GetTotalHeapSize() c_ulonglong {
         heapEntry.lpData = null;
 
         // ' Enumerate the memory blocks in the heap
-            success = heap.HeapWalk(hHeap, &heapEntry);
-            if (success == 1) {
-                // ' Check if it is a valid memory block
-                if (heapEntry.wFlags == 1 and heap.PROCESS_HEAP_ENTRY_BUSY == 1) {
-                    // ' Get the size of the memory block
-                    totalHeapSize += heap.HeapSize(hHeap, 0, heapEntry.lpData);
-                }
+        success = heap.HeapWalk(hHeap, &heapEntry);
+        if (success != 0) {
+            // ' Check if it is a valid memory block
+            // std.debug.print("Heap Entry wFlags: {any}, Heap Entry Busy: {any}\n", .{heapEntry.wFlags, heap.PROCESS_HEAP_ENTRY_BUSY});
+            // std.debug.print("Res: {any}\n", .{1 & 4});
+            if ((heapEntry.wFlags & heap.PROCESS_HEAP_ENTRY_BUSY) != 0) {
+                // ' Get the size of the memory block
+                const oneheapsize = heap.HeapSize(hHeap, 0, heapEntry.lpData);
+                // std.debug.print("One heap memory: {any}\n", .{oneheapsize});
+                totalHeapSize += oneheapsize;
             }
-            else {
-                // ' If the enumeration fails, break out of the loop
-                if (heap.GetLastError() != heap.ERROR_NO_MORE_ITEMS) {
-                    std.debug.print("Failed to walk the heap", .{}); 
-                }
+        } 
+        else {
+            // ' If the enumeration fails, break out of the loop
+            if (heap.GetLastError() != heap.ERROR_NO_MORE_ITEMS) {
+                std.debug.print("Failed to walk the heap", .{});
             }
+        }
     }
     return totalHeapSize;
-}
-
-pub fn say() !void {
-    std.debug.print("Heap memory: {any}\n", .{GetTotalHeapSize()});
 }
 
 test "Create array using heap" {
     // const t = "dadd"
     const allocator = std.heap.page_allocator;
     std.debug.print("Before allocation. ", .{});
-    try say();
+
+    std.debug.print("Heap memory: {any}\n", .{GetTotalHeapSize()});
     const memory = try allocator.alloc(u8, 100);
     std.debug.print("After allocation. ", .{});
-    try say();
+    std.debug.print("Heap memory: {any}\n", .{GetTotalHeapSize()});
+
 
     //defer allocator.free(memory);
 
@@ -82,10 +102,12 @@ test "Create array using heap" {
 
     // std.debug.print("\n{any}\n\n", .{memory});
     std.debug.print("Before free. ", .{});
-    try say();
+
+    std.debug.print("Heap memory: {any}\n", .{GetTotalHeapSize()});
     allocator.free(memory);
     std.debug.print("After free. ", .{});
-    try say();
+    std.debug.print("Heap memory: {any}\n", .{GetTotalHeapSize()});
+
     // errdefer std.debug.panic("\nThese array already not exists... Rest in Peace!\n", .{});
     // std.debug.print("\n{any}\n\n", .{memory});
     // Trying to show array with name memory gives us error

@@ -18,25 +18,25 @@ pub fn build(b: *std.Build) void {
 
     ////////////////////////////////////////////////////////////////////////////////
 
-    // const exe = b.addExecutable(.{
-    //     .name = "ZigMemory",
-    //     .root_source_file = b.path("src/heap.zig"), //AllocationTests
-    //     .target = target,
-    //     .optimize = optimize,
-    // });
-    // exe.linkLibC();
-    // b.installArtifact(exe); // executable to be installed into the standard location
+    const exe = b.addExecutable(.{
+        .name = "ZigMemory",
+        .root_source_file = b.path("src/AllocationTests.zig"), //AllocationTests
+        .target = target,
+        .optimize = optimize,
+    });
+    exe.linkLibC();
+    b.installArtifact(exe); // executable to be installed into the standard location
 
     // //##############################################################################
 
-    // const run_cmd = b.addRunArtifact(exe); // Run step in the build graph
+    const run_cmd = b.addRunArtifact(exe); // Run step in the build graph
 
-    // if (b.args) |args| {
-    //     run_cmd.addArgs(args); // pass arguments to the application in the build `zig build run -- arg1 arg2 etc`
-    // }
+    if (b.args) |args| {
+        run_cmd.addArgs(args); // pass arguments to the application in the build `zig build run -- arg1 arg2 etc`
+    }
 
-    // const run_step = b.step("run", "Run the app"); // only run
-    // run_step.dependOn(&run_cmd.step);
+    const run_step = b.step("run", "Run the app"); // only run
+    run_step.dependOn(&run_cmd.step);
 
     ////////////////////////////////////////////////////////////////////////////////
 
