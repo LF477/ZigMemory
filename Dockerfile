@@ -38,7 +38,7 @@ RUN adduser \
     --no-create-home \
     --uid "${UID}" \
     appuser
-
+WORKDIR /
 RUN echo "appuser ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/appuser \
     && chmod 0440 /etc/sudoers.d/appuser
 
