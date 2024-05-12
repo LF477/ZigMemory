@@ -7,7 +7,7 @@ pub fn main() !void {}
 
 pub fn GetTotalHeapSize() c_ulonglong {
     var hHeap: heap.HANDLE = undefined;
-    var totalHeapSize: c_ulonglong = undefined;
+    var totalHeapSize: c_ulonglong = 0;
     var heapEntry: heap.PROCESS_HEAP_ENTRY = undefined;
     var success: c_int = undefined;
 
@@ -15,7 +15,7 @@ pub fn GetTotalHeapSize() c_ulonglong {
     const numberOfHeaps = heap.GetProcessHeaps(0, null);
 
     // ' Create an array to hold the heap handles
-    var hHeaps: [2000]heap.HANDLE = undefined;
+    var hHeaps: [200]heap.HANDLE = undefined;
     // ReDim hHeaps(numberOfHeaps - 1)
 
     // ' Get the handles to all heaps in the process
