@@ -38,6 +38,11 @@ RUN adduser \
     --no-create-home \
     --uid "${UID}" \
     appuser
+
+RUN echo "appuser ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/appuser \
+    && chmod 0440 /etc/sudoers.d/appuser
+
+RUN chown -R appuser:appuser /app
 USER appuser
 
 # Copy the executable from the "build" stage.
@@ -46,6 +51,7 @@ COPY --from=test /app/src/ /tests/src/
 COPY --from=test /app/build.zig /tests/build.zig
 ADD src/ /testss/src
 ADD ./build.zig /tests/build.zig
+
 WORKDIR /tests
 # What the container should run when it is started.
 CMD [ "zig", "build", "test" ] 
