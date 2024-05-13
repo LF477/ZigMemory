@@ -1,51 +1,132 @@
 const std = @import("std");
 const expect = std.testing.expect;
-const c = @cImport({
-    @cInclude("malloc.h");
+const windows = @cImport({
+    @cInclude("Windows.h");
 });
+pub fn main() !void {
+    const allocator = std.heap.page_allocator;
+    std.debug.print("Before allocation. ", .{});
+    const m1 = getTotalHeapSize(allocator);
+    std.debug.print("Heap memory: {any}\n", .{m1});
 
-pub fn main() !void {}
+    const heapAllocator = std.heap.raw_c_allocator;
+    const memory = try heapAllocator.alloc(u8, 1000);
+
+    for (memory) |i| {
+        memory[i] = 42;
+    }
+
+    const m2 = getTotalHeapSize(allocator);
+    std.debug.print("After allocation. ", .{});
+    std.debug.print("Heap memory: {any}\n", .{m2});
+
+    std.debug.print("Before free. ", .{});
+    std.debug.print("Heap memory: {any}\n", .{getTotalHeapSize(allocator)});
+    heapAllocator.free(memory);
+    std.debug.print("After free. ", .{});
+    std.debug.print("Heap memory: {any}\n", .{getTotalHeapSize(allocator)});
+}
+
+fn getTotalHeapSize(allocator: std.mem.Allocator) !usize {
+    var totalHeapSize: usize = 0;
+    var numberOfHeaps: windows.DWORD = 0;
+    var hHeaps: []windows.HANDLE = undefined;
+
+    // Get the number of heaps in the process
+    numberOfHeaps = windows.GetProcessHeaps(0, null);
+
+    // Create an array to hold the heap handles
+    hHeaps = try allocator.alloc(windows.HANDLE, numberOfHeaps);
+    defer allocator.free(hHeaps);
+    
+    // Get the handles to all heaps in the process
+    _ = windows.GetProcessHeaps(numberOfHeaps, &hHeaps[0]);
+
+    // Enumerate all heaps
+    for (hHeaps) |hHeap| {
+        var heapEntry: windows.PROCESS_HEAP_ENTRY = undefined;
+        heapEntry.lpData = null;
+
+        // Enumerate the memory blocks in the heap
+        while (windows.HeapWalk(hHeap, &heapEntry) != 0) {
+            // Check if it is a valid memory block
+            if ((heapEntry.wFlags & windows.PROCESS_HEAP_ENTRY_BUSY) != 0) {
+                // Get the size of the memory block
+                totalHeapSize += windows.HeapSize(hHeap, 0, heapEntry.lpData);
+            }
+        }
+
+        // If the enumeration fails, break out of the loop
+        if (windows.GetLastError() != windows.ERROR_NO_MORE_ITEMS) {
+            std.debug.print("Failed to walk the heap\n", .{});
+            break;
+        }
+    }
+
+    return totalHeapSize;
+}
+
+fn say_heap(word: []const u8, allocator: std.mem.Allocator) !void {
+    std.debug.print("Heap memory {s}: {any}\n", .{word, getTotalHeapSize(allocator)});
+}
 
 test "Create array using heap" {
-    const allocator = std.heap.page_allocator;
+    const allocator = std.heap.raw_c_allocator;
+    try say_heap("before allocation", allocator);
+    
+    // const start_memory = getTotalHeapSize(allocator);
 
     const memory = try allocator.alloc(u8, 100);
-
-    //defer allocator.free(memory);
+    try say_heap("after allocation", allocator);
 
     memory[1] = 2;
+    try say_heap("after changing one element in array", allocator);
+
     const memory1 = memory[0..88];
+    try say_heap("after creating slices from array", allocator);
 
     // Heap-allocated dynamic array using ArrayList
     var numbers = std.ArrayList(u32).init(allocator);
-    defer numbers.deinit();
+    try say_heap("after allocation dynamic but empty for now array", allocator);
 
     try numbers.append(10);
+    try say_heap("after adding first element to array", allocator);
+
     try numbers.append(20);
+    try say_heap("after adding second element to array", allocator);
+
     try numbers.append(30);
+    try say_heap("after adding third element to array", allocator);
 
     try expect(memory1.len == 88);
     try expect(memory.len == 100);
     try expect(memory[1] == 2);
-    // try expect(memory[0] == 170);
-    try expect(@TypeOf(memory) == []u8);
     try expect(numbers.items.len == 3);
 
-    // std.debug.print("\n{any}\n\n", .{memory});
     allocator.free(memory);
-    // errdefer std.debug.panic("\nThese array already not exists... Rest in Peace!\n", .{});
-    // std.debug.print("\n{any}\n\n", .{memory});
-    // Trying to show array with name memory gives us error
-    // It means it erases it
+    // allocator.free(memory1);
+    try say_heap("after freeing fixed size array", allocator);
+    numbers.deinit();
+    try say_heap("after deinitialising dynamic array", allocator);
+    std.debug.print("Heap memory: {any}\n", .{getTotalHeapSize(allocator)});
+    std.debug.print("Heap memory: {any}\n", .{getTotalHeapSize(allocator)});
+    std.debug.print("Heap memory: {any}\n", .{getTotalHeapSize(allocator)});
+    std.debug.print("Heap memory: {any}\n", .{getTotalHeapSize(allocator)});
+    std.debug.print("Heap memory: {any}\n", .{getTotalHeapSize(allocator)});
 
-    // DOCKER GIVES ERROR WHILE IN TERMINAL IT WORKS...
-    // const memory2 = try allocator.create(u8);
-    // allocator.destroy(memory2);
-    // const memory3 = try allocator.create(u8);
-    // defer allocator.destroy(memory3);
+    try say_heap("after all 1", allocator);
+    try say_heap("after all 2", allocator);
+    try say_heap("after all 3", allocator);
+    try say_heap("after all 4", allocator);
+    try say_heap("after all 5", allocator);
+    try say_heap("after all 6", allocator);    
 
-    // try std.testing.expect(memory2 == memory3); // memory reuse
-    // DOCKER GIVES ERROR WHILE IN TERMINAL IT WORKS...
+    // const end_memory = getTotalHeapSize(allocator);
+    // const result: usize = @as(usize, end_memory) - @as(usize, start_memory);
+    // std.debug.print("s: {!}, e: {!}\n", .{, });
+    // std.debug.print("Memory difference", .{result});
+
+    // try expect(end_memory == start_memory);
 }
 
 test "Heap allocator create/destroy (Single item)" {

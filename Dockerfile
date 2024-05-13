@@ -14,6 +14,7 @@ FROM base as build
 ADD ./ app/
 WORKDIR /app
 RUN zig build
+VOLUME [ "/app" ]
 
 ################################################################################
 # add test step, where you pull your container and execute tests on your application
@@ -41,7 +42,10 @@ USER appuser
 
 # Copy the executable from the "build" stage.
 COPY --from=build /app/zig-out/bin/ /
-COPY --from=test /app/src/ /tests/
+COPY --from=test /app/src/ /tests/src/
+COPY --from=test /app/build.zig /tests/build.zig
+ADD src/ /testss/src
+ADD ./build.zig /tests/build.zig
 
 # What the container should run when it is started.
 ENTRYPOINT [ "/ZigMemory" ] 
